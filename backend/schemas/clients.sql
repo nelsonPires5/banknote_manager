@@ -9,5 +9,5 @@ CREATE TABLE IF NOT EXISTS clientes (
         district TEXT NOT NULL,
         city TEXT NOT NULL,
         phone_number TEXT,
-        notes TEXT,
+        notes TEXT
 );
