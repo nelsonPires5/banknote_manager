@@ -1,4 +1,4 @@
-CREATE TABLE clientes (
+CREATE TABLE IF NOT EXISTS clientes (
         cpf_cnpj INTEGER NOT NULL PRIMARY KEY,
         created_at DATE NOT NULL,
         updated_at DATE NOT NULL,
@@ -8,6 +8,6 @@ CREATE TABLE clientes (
         address_number TEXT NOT NULL,
         district TEXT NOT NULL,
         city TEXT NOT NULL,
-        phone TEXT,
+        phone_number TEXT,
         notes TEXT,
 );

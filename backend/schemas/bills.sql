@@ -1,4 +1,4 @@
-CREATE TABLE bills (
+CREATE TABLE IF NOT EXISTS bills (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         created_at DATE NOT NULL,
         cpf_cnpj INTEGER NOT NULL,
