@@ -2,9 +2,10 @@ import sqlite3
 import io
 from datetime import datetime
 from sqlalchemy import (
-    create_engine, MetaData, Column, Table, Integer, String, DateTime, Float, 
+    create_engine, MetaData, Column, Table, Integer, DateTime, Float,
     BigInteger, Text
 )
+
 
 class Connect():
     """Manage connection with database"""
@@ -13,13 +14,18 @@ class Connect():
         self.db_path = 'sqlite:///' + self.db_name
         self.engine = create_engine(self.db_path)
         self.metadata = MetaData(bind=self.engine)
-        
-        clients_table = Table(
+
+        Table(
             'clients',
             self.metadata,
-            Column('cpf_cnpj', Integer, nullable=False, primary_key=True),
+            Column('cpf_cnpj', BigInteger, nullable=False, primary_key=True),
             Column('created_at', DateTime, default=datetime.now),
-            Column('updated_at', DateTime, default=datetime.now, onupdate=datetime.now),
+            Column(
+                'updated_at',
+                DateTime,
+                default=datetime.now,
+                onupdate=datetime.now
+            ),
             Column('full_name', Text, nullable=False),
             Column('company_name', Text),
             Column('address', Text, nullable=False),
@@ -29,17 +35,17 @@ class Connect():
             Column('phone_number', Text),
             Column('notes', Text)
         )
-       
-        bills_table = Table(
+
+        Table(
            'bills',
            self.metadata,
            Column('id', Integer, nullable=False, primary_key=True),
            Column('created_at', DateTime, default=datetime.now),
-           Column('cpf_cnpj', Integer, nullable=False),
+           Column('cpf_cnpj', BigInteger, nullable=False),
            Column('amount', Float, nullable=False),
            Column('installments', Integer, nullable=False),
            Column('amount_installments', Float, nullable=False)
-       )
+        )
 
         self.metadata.create_all()
 
@@ -61,4 +67,4 @@ class Connect():
             backup = f.read()
             self.cursor.executescript(backup)
         self.conn.close()
-        print(f'Restore done success!')
+        print('Restore done success!')
