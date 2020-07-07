@@ -15,7 +15,7 @@ class Connect():
         self.engine = create_engine(self.db_path)
         self.metadata = MetaData(bind=self.engine)
 
-        Table(
+        self.clients_table = Table(
             'clients',
             self.metadata,
             Column('cpf_cnpj', BigInteger, nullable=False, primary_key=True),
@@ -36,7 +36,7 @@ class Connect():
             Column('notes', Text)
         )
 
-        Table(
+        self.bills_table = Table(
            'bills',
            self.metadata,
            Column('id', Integer, nullable=False, primary_key=True),
