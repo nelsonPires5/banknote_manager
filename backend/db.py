@@ -1,6 +1,7 @@
-import sqlite3
 import io
+import uuid
 from datetime import datetime
+import sqlite3
 from sqlalchemy import (
     create_engine, MetaData, Column, Table, Integer, DateTime, Float,
     BigInteger, Text
@@ -36,15 +37,45 @@ class Connect():
             Column('notes', Text)
         )
 
-        self.bills_table = Table(
-           'bills',
-           self.metadata,
-           Column('id', Integer, nullable=False, primary_key=True),
-           Column('created_at', DateTime, default=datetime.now),
-           Column('cpf_cnpj', BigInteger, nullable=False),
-           Column('amount', Float, nullable=False),
-           Column('installments', Integer, nullable=False),
-           Column('amount_installments', Float, nullable=False)
+        self.orders_table = Table(
+            'orders',
+            self.metadata,
+            Column(
+                'id',
+                Text,
+                default=str(uuid.uuid4().hex),
+                primary_key=True
+            ),
+            Column('cpf_cnpj', BigInteger, nullable=False),
+            Column('created_at', DateTime, default=datetime.now),
+            Column('amount', Float, nullable=False),
+            Column('installments', Integer, nullable=False),
+            Column('amount_installments', Float, nullable=False)
+        )
+
+        self.transactions_table = Table(
+            'transactions',
+            self.metadata,
+            Column(
+                'id',
+                Text,
+                default=str(uuid.uuid4().hex),
+                primary_key=True
+            ),
+            Column('order_id', Text, nullable=False),
+            Column('cpf_cnpj', BigInteger, nullable=False),
+            Column('created_at', DateTime, default=datetime.now),
+            Column(
+                'updated_at',
+                DateTime,
+                default=datetime.now,
+                onupdate=datetime.now
+            ),
+            Column('installment', Integer, nullable=False),
+            Column('amount', Float, nullable=False),
+            Column('expiration_date', DateTime, nullable=False),
+            Column('payment_method', Text, default='promissory_note'),
+            Column('status', Text, nullable=False)
         )
 
         self.metadata.create_all()
