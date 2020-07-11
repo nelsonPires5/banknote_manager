@@ -13,7 +13,7 @@ class Client():
 
     def create(
         self,
-        cpf_cnpj: int,
+        cpf_cnpj: str,
         full_name: str,
         address: str,
         address_number: int,
@@ -42,8 +42,24 @@ class Client():
 
     def read_all(self) -> list:
         """Read client database"""
-        sele = select([self.clients_table])
-        return [row for row in sele.execute()] 
+        select_all = select([self.clients_table]).execute()
+        return [row for row in select_all] 
+
+    def read_by_name(self, name: str) -> list:
+        """Read all clients by name"""
+        select_by_name = self.clients_table \
+            .select() \
+            .where(self.clients_table.c.full_name.like('%' + name + '%')) \
+            .execute()
+        return [row for row in select_by_name]
+
+    def read_by_cpf(self, cpf_cnpj: str) -> list:
+        """Read all clients by cpf_cnpj"""
+        select_by_name = self.clients_table \
+            .select() \
+            .where(self.clients_table.c.cpf_cnpj==cpf_cnpj) \
+            .execute()
+        return [row for row in select_by_name]
 
     def update(self, cpf_cnpj: int, column_and_change: dict) -> None:
         """Update an specific client"""
