@@ -3,8 +3,7 @@ import uuid
 from datetime import datetime
 import sqlite3
 from sqlalchemy import (
-    create_engine, MetaData, Column, Table, Integer, DateTime, Float,
-    BigInteger, Text
+    create_engine, MetaData, Column, Table, Integer, DateTime, Float, Text
 )
 
 
@@ -19,7 +18,7 @@ class Connect():
         self.clients_table = Table(
             'clients',
             self.metadata,
-            Column('cpf_cnpj', BigInteger, nullable=False, primary_key=True),
+            Column('cpf_cnpj', Text, nullable=False, primary_key=True),
             Column('created_at', DateTime, default=datetime.now),
             Column(
                 'updated_at',
@@ -46,7 +45,7 @@ class Connect():
                 default=str(uuid.uuid4().hex),
                 primary_key=True
             ),
-            Column('cpf_cnpj', BigInteger, nullable=False),
+            Column('cpf_cnpj', Text, nullable=False),
             Column('created_at', DateTime, default=datetime.now),
             Column('amount', Float, nullable=False),
             Column('installments', Integer, nullable=False),
@@ -63,7 +62,7 @@ class Connect():
                 primary_key=True
             ),
             Column('order_id', Text, nullable=False),
-            Column('cpf_cnpj', BigInteger, nullable=False),
+            Column('cpf_cnpj', Text, nullable=False),
             Column('created_at', DateTime, default=datetime.now),
             Column(
                 'updated_at',
