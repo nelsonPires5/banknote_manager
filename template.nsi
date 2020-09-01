@@ -1,0 +1,1 @@
+Template to create an installer with NSIS
