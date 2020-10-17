@@ -1,3 +1,3 @@
-# Descrição
+# Description
 
-CV Distribuidora desktop app
+Banknote manager is an app to issue promissory notes and manage them.
