@@ -1,6 +1,7 @@
-from backend.db import Connect
-from backend.clients import Client
-from backend.orders import Order
+from backend.database.connect import Connect
+from backend.template.database.client import Client
+from backend.template.database.order import Order
+
 
 if __name__ == "__main__":
     db_conn = Connect('primary.db')

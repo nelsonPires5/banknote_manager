@@ -1,61 +1,44 @@
-from datetime import datetime
-from backend.db import Connect
 from sqlalchemy import update, delete, select
-from typing import List
+from backend.database.connect import Connect
 
 
-class Order():
-    """Order main class"""
+class Client():
+    """Client main class"""
     def __init__(
         self,
         db_connection: Connect
     ) -> None:
         self.engine = db_connection.engine
-        self.orders_table = db_connection.orders_table
-        self.transactions_table = db_connection.transactions_table
+        self.clients_table = db_connection.clients_table
 
     def create(
         self,
         cpf_cnpj: str,
-        amount: float,
-        installments: str,
-        amount_installments: float,
-        expiration_dates: List[str],
-        date_format: str = '%d/%m/%y',
-        payment_method: str = None,
-        status: str = None,
+        full_name: str,
+        address: str,
+        address_number: int,
+        district: str,
+        city: str,
+        company_name: str = None,
+        phone_number: str = None,
+        notes: str = None
     ) -> None:
-        """Create orders and transactions in the database"""
+        """Create client in the database"""
         conn = self.engine.connect()
-        insert_orders = self.orders_table.insert()
-        new_order = insert_orders.values(
+        insert = self.clients_table.insert()
+        new_client = insert.values(
             cpf_cnpj=cpf_cnpj,
-            amount=amount,
-            installments=installments,
-            amount_installments=amount_installments,
+            full_name=full_name,
+            company_name=company_name,
+            address=address,
+            address_number=address_number,
+            district=district,
+            city=city,
+            phone_number=phone_number,
+            notes=notes
         )
-        res = conn.execute(new_order)
-
-        trans_items = []
-        print(res.inserted_primary_key)
-        for index, date in enumerate(expiration_dates):
-            date = datetime.strptime(date, date_format)
-            trans_items.append({
-                'order_id': res.inserted_primary_key,
-                'cpf_cnpj': cpf_cnpj,
-                'installment': index + 1,
-                'amount': amount_installments,
-                'expiration_date': date,
-                'payment_method': payment_method,
-                'status': status
-            })
-        insert_transactions = self.transactions_table.insert()
-        conn.execute(insert_transactions, trans_items)
+        conn.execute(new_client)
         conn.close()
-
-    def verify_cpf_exists(self, cpf_cnpj: str):
-        """Verify if is a cpf that exist in database"""
-        pass
 
     def read_all(self) -> list:
         """Read client database"""

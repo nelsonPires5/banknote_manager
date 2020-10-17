@@ -1,5 +1,2 @@
-create-env:
-	@virtualenv --python='/usr/bin/python3' .venv
-
-run_app:
+runapp:
 	@python main.py
