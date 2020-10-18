@@ -1,6 +1,6 @@
 from backend.database.connect import Connect
-from backend.template.database.client import Client
-from backend.template.database.order import Order
+from backend.database.client import Client
+from backend.database.order import Order
 
 
 if __name__ == "__main__":
@@ -22,8 +22,8 @@ if __name__ == "__main__":
     #     'Universidade',
     #     'Uberaba'
     # )
-    print(cl.read_all())
-    print(cl.read_by_name('pires'))
+    # print(cl.read_all())
+    # print(cl.read_by_name('pires'))
     ord = Order(db_conn)
     ord.create(
         '22689495618',

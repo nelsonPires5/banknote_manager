@@ -1,10 +1,9 @@
 import io
-import uuid
-from datetime import datetime
 import sqlite3
-from sqlalchemy import (
-    create_engine, MetaData, Column, Table, Integer, DateTime, Float, Text
-)
+from sqlalchemy import create_engine, MetaData
+from backend.template.database.client import Client
+from backend.template.database.order import Order
+from backend.template.database.transaction import Transaction
 
 
 class Connect():
@@ -14,69 +13,9 @@ class Connect():
         self.db_path = 'sqlite:///' + self.db_name
         self.engine = create_engine(self.db_path)
         self.metadata = MetaData(bind=self.engine)
-
-        self.clients_table = Table(
-            'clients',
-            self.metadata,
-            Column('cpf_cnpj', Text, nullable=False, primary_key=True),
-            Column('created_at', DateTime, default=datetime.now),
-            Column(
-                'updated_at',
-                DateTime,
-                default=datetime.now,
-                onupdate=datetime.now
-            ),
-            Column('full_name', Text, nullable=False),
-            Column('company_name', Text),
-            Column('address', Text, nullable=False),
-            Column('address_number', Text, nullable=False),
-            Column('district', Text, nullable=False),
-            Column('city', Text, nullable=False),
-            Column('phone_number', Text),
-            Column('notes', Text)
-        )
-
-        self.orders_table = Table(
-            'orders',
-            self.metadata,
-            Column(
-                'id',
-                Text,
-                default=str(uuid.uuid4().hex),
-                primary_key=True
-            ),
-            Column('cpf_cnpj', Text, nullable=False),
-            Column('created_at', DateTime, default=datetime.now),
-            Column('amount', Float, nullable=False),
-            Column('installments', Integer, nullable=False),
-            Column('amount_installments', Float, nullable=False),
-            Column('status', Text, nullable=False)
-        )
-
-        self.transactions_table = Table(
-            'transactions',
-            self.metadata,
-            Column(
-                'id',
-                Text,
-                default=str(uuid.uuid4().hex),
-                primary_key=True
-            ),
-            Column('order_id', Text, nullable=False),
-            Column('cpf_cnpj', Text, nullable=False),
-            Column('created_at', DateTime, default=datetime.now),
-            Column(
-                'updated_at',
-                DateTime,
-                default=datetime.now,
-                onupdate=datetime.now
-            ),
-            Column('installment', Integer, nullable=False),
-            Column('amount', Float, nullable=False),
-            Column('expiration_date', DateTime, nullable=False),
-            Column('payment_method', Text, default='promissory_note'),
-            Column('status', Text, nullable=False)
-        )
+        self.clients_table = Client.template(self.metadata)
+        self.orders_table = Order.template(self.metadata)
+        self.transactions_table = Transaction.template(self.metadata)
 
         self.metadata.create_all()
 
