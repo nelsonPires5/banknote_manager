@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Union
 from sqlalchemy import update, delete, select
 from backend.database.connect import Connect
 
@@ -33,9 +33,9 @@ class Order():
             amount=amount,
             installments=installments,
             amount_installments=amount_installments,
-            status='captured'
+            status='to_capture'
         )
-        # status = ['captured', 'paid', 'cancelled']
+        # status = ['to_capture', 'paid', 'cancelled']
         res = conn.execute(new_order)
 
         trans_items = []
@@ -51,48 +51,87 @@ class Order():
                 'payment_method': payment_method,
                 'status': status
             })
+        # status = ['paid', 'on_time', 'delayed', 'cancelled']
         insert_transactions = self.transactions_table.insert()
         conn.execute(insert_transactions, trans_items)
         conn.close()
 
-    def verify_cpf_exists(self, cpf_cnpj: str):
-        """Verify if is a cpf that exist in database"""
-        pass
-
-    def read_all(self) -> list:
-        """Read client database"""
-        select_all = select([self.clients_table]).execute()
-        return [row for row in select_all]
-
-    def read_by_name(self, name: str) -> list:
-        """Read all clients by name"""
-        select_by_name = self.clients_table \
-            .select() \
-            .where(self.clients_table.c.full_name.like('%' + name + '%')) \
-            .execute()
-        return [row for row in select_by_name]
-
-    def read_by_cpf(self, cpf_cnpj: str) -> list:
-        """Read all clients by cpf_cnpj"""
-        select_by_name = self.clients_table \
-            .select() \
-            .where(self.clients_table.c.cpf_cnpj==cpf_cnpj) \
-            .execute()
-        return [row for row in select_by_name]
-
-    def update(self, cpf_cnpj: int, column_and_change: dict) -> None:
-        """Update an specific client"""
+    def cancel(self, order_id: str) -> None:
         conn = self.engine.connect()
-        updt = update(self.clients_table) \
-            .where(self.clients_table.c.cpf_cpnj == cpf_cnpj) \
-            .values(column_and_change)
+        updt = update(self.orders_table) \
+            .where(self.orders_table.c.id == order_id) \
+            .values({'status': 'cancelled'})
+        conn.execute(updt)
+        updt = update(self.transactions_table) \
+            .where(self.transactions_table.c.order_id == order_id) \
+            .values({'status': 'cancelled'})
         conn.execute(updt)
         conn.close()
 
-    def delete_client(self, cpf_cnpj: int) -> None:
-        """Delete an specific client"""
+    def paid(self, order_id: str, installments: List[int]):
         conn = self.engine.connect()
-        dele = delete(self.clients_table) \
-            .where(self.clients_table.c.cpf_cpnj == cpf_cnpj)
-        conn.execute(dele)
+
+        for installment in installments:
+            updt = update(self.transactions_table) \
+                .where(self.transactions_table.c.order_id == order_id) \
+                .where(self.transactions_table.c.installment == installment) \
+                .values({'status': 'paid'})
+            conn.execute(updt)
+
+        last_installment = select([self.clients_table]) \
+            .where(self.transactions_table.c.order_id == order_id) \
+            .order_by(self.transactions_table.c.installment) \
+            .execute()
+        last_installment = last_installment[-1]
+
+        if last_installment.status == 'paid':
+            updt = update(self.orders_table) \
+                .where(self.orders_table.c.id == order_id) \
+                .values({'status': 'paid'})
+            conn.execute(updt)
+
         conn.close()
+
+    def read_all_orders(self) -> list:
+        """Read client database"""
+        select_all = select([self.orders_table]).execute()
+        return [row for row in select_all]
+
+    def read_orders_by_order_id(self, order_id: str) -> list:
+        """Read all clients by name"""
+        select_by_name = self.orders_table \
+            .select() \
+            .where(self.orders_table.c.id == order_id) \
+            .execute()
+        return [row for row in select_by_name]
+
+    def read_orders_by_cpf(self, cpf_cnpj: str) -> list:
+        """Read all clients by cpf_cnpj"""
+        select_cpf = self.orders_table \
+            .select() \
+            .where(self.orders_table.c.cpf_cnpj==cpf_cnpj) \
+            .execute()
+        return [row for row in select_cpf]
+    
+    def read_all_transactions(self) -> list:
+        """Read client database"""
+        select_all = select([self.transactions_table]).execute()
+        return [row for row in select_all]
+
+    def read_orders_by_order_id(self, order_id: str) -> list:
+        """Read all clients by name"""
+        select_by_name = self.transactions_table \
+            .select() \
+            .where(self.transactions_table.c.order_id == order_id) \
+            .execute()
+        return [row for row in select_by_name]
+
+    def read_orders_by_cpf(self, cpf_cnpj: str) -> list:
+        """Read all clients by cpf_cnpj"""
+        select_cpf = self.transactions_table \
+            .select() \
+            .where(self.transactions_table.c.cpf_cnpj==cpf_cnpj) \
+            .execute()
+        return [row for row in select_cpf]
+
+
