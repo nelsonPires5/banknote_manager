@@ -49,7 +49,8 @@ class Connect():
             Column('created_at', DateTime, default=datetime.now),
             Column('amount', Float, nullable=False),
             Column('installments', Integer, nullable=False),
-            Column('amount_installments', Float, nullable=False)
+            Column('amount_installments', Float, nullable=False),
+            Column('status', Text, nullable=False)
         )
 
         self.transactions_table = Table(

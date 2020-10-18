@@ -33,7 +33,9 @@ class Order():
             amount=amount,
             installments=installments,
             amount_installments=amount_installments,
+            status='captured'
         )
+        # status = ['captured', 'paid', 'cancelled']
         res = conn.execute(new_order)
 
         trans_items = []
@@ -60,7 +62,7 @@ class Order():
     def read_all(self) -> list:
         """Read client database"""
         select_all = select([self.clients_table]).execute()
-        return [row for row in select_all] 
+        return [row for row in select_all]
 
     def read_by_name(self, name: str) -> list:
         """Read all clients by name"""
