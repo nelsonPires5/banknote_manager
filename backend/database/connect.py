@@ -13,9 +13,9 @@ class Connect():
         self.db_path = 'sqlite:///' + self.db_name
         self.engine = create_engine(self.db_path)
         self.metadata = MetaData(bind=self.engine)
-        self.clients_table = Client.template(self.metadata)
-        self.orders_table = Order.template(self.metadata)
-        self.transactions_table = Transaction.template(self.metadata)
+        self.clients_table = Client(self.metadata).template()
+        self.orders_table = Order(self.metadata).template()
+        self.transactions_table = Transaction(self.metadata).template()
 
         self.metadata.create_all()
 
