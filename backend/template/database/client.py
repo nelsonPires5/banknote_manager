@@ -1,6 +1,5 @@
-import uuid
 from datetime import datetime
-from sqlalchemy import Column, Table, Integer, DateTime, Float, Text
+from sqlalchemy import Column, Table, Integer, DateTime, Text
 
 
 class Client:
@@ -14,11 +13,16 @@ class Client:
             self.metadata,
             Column('cpf_cnpj', Text, nullable=False, primary_key=True),
             Column('created_at', DateTime, default=datetime.now),
-            Column('updated_at', DateTime, default=datetime.now, onupdate=datetime.now),
+            Column(
+                'updated_at',
+                DateTime,
+                default=datetime.now,
+                onupdate=datetime.now
+            ),
             Column('full_name', Text, nullable=False),
             Column('company_name', Text),
             Column('address', Text, nullable=False),
-            Column('address_number', Text, nullable=False),
+            Column('address_number', Integer, nullable=False),
             Column('district', Text, nullable=False),
             Column('city', Text, nullable=False),
             Column('phone_number', Text),
