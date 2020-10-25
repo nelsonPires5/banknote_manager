@@ -1,17 +1,11 @@
 clean:
-	@rm -f *.db __pycache__
+	@rm -rf *.db */__pycache__ __pycache__ */.pytest_cache .pytest_cache
 
 codecheck:
-	@echo "Codestyle check backend"
-	@flake8 backend
-	@echo "Codestyle check frontend"
-	@flake8 frontend
+	@flake8 backend frontend
 
-runtests:
-	@echo "Unit test backend"
-	@pytest backend/tests
-	@echo "Unit test frontend"
-	@pytest frontend/tests
+runtests: clean
+	@pytest backend/tests frontend/tests -vv
 
 runapp:
 	@python main.py
