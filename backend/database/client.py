@@ -43,7 +43,7 @@ class Client():
     def read_all(self) -> list:
         """Read client database"""
         select_all = select([self.clients_table]).execute()
-        return [row for row in select_all] 
+        return [row for row in select_all]
 
     def read_by_name(self, name: str) -> list:
         """Read all clients by name"""
@@ -57,7 +57,7 @@ class Client():
         """Read all clients by cpf_cnpj"""
         select_by_name = self.clients_table \
             .select() \
-            .where(self.clients_table.c.cpf_cnpj==cpf_cnpj) \
+            .where(self.clients_table.c.cpf_cnpj == cpf_cnpj) \
             .execute()
         return [row for row in select_by_name]
 

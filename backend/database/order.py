@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Union
+from typing import List
 from sqlalchemy import update, delete, select
 from backend.database.connect import Connect
 
@@ -109,29 +109,11 @@ class Order():
         """Read all clients by cpf_cnpj"""
         select_cpf = self.orders_table \
             .select() \
-            .where(self.orders_table.c.cpf_cnpj==cpf_cnpj) \
+            .where(self.orders_table.c.cpf_cnpj == cpf_cnpj) \
             .execute()
         return [row for row in select_cpf]
-    
+
     def read_all_transactions(self) -> list:
         """Read client database"""
         select_all = select([self.transactions_table]).execute()
         return [row for row in select_all]
-
-    def read_orders_by_order_id(self, order_id: str) -> list:
-        """Read all clients by name"""
-        select_by_name = self.transactions_table \
-            .select() \
-            .where(self.transactions_table.c.order_id == order_id) \
-            .execute()
-        return [row for row in select_by_name]
-
-    def read_orders_by_cpf(self, cpf_cnpj: str) -> list:
-        """Read all clients by cpf_cnpj"""
-        select_cpf = self.transactions_table \
-            .select() \
-            .where(self.transactions_table.c.cpf_cnpj==cpf_cnpj) \
-            .execute()
-        return [row for row in select_cpf]
-
-
